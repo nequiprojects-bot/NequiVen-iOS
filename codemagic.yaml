@@ -5,9 +5,8 @@ workflows:
     instance_type: mac_mini_m1
     
     environment:
-      ios_signing:
-        distribution_type: ad_hoc  # Para distribución directa (puedes cambiarlo a app_store)
-        bundle_identifier: ui.os.nequiven
+      # FIRMA DESHABILITADA - IPA sin firma para pruebas
+      # Para habilitar firma, descomentar ios_signing y configurar certificados
       
       vars:
         XCODE_WORKSPACE: "iosApp/iosApp.xcworkspace"
@@ -30,22 +29,36 @@ workflows:
           pod install
           cd ..
           
-      - name: Configurar firma de código
+      - name: Compilar IPA sin firma
         script: |
-          echo "🔐 Configurando certificados..."
-          keychain initialize
+          echo "🚀 Compilando app iOS (sin firma para pruebas)..."
+          cd iosApp
+          xcodebuild \
+            -workspace iosApp.xcworkspace \
+            -scheme iosApp \
+            -configuration Release \
+            -sdk iphoneos \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            clean build
           
-      - name: Compilar IPA
+      - name: Crear IPA
         script: |
-          echo "🚀 Compilando app iOS..."
-          xcode-project build-ipa \
-            --workspace "$XCODE_WORKSPACE" \
-            --scheme "$XCODE_SCHEME" \
-            --config Release
+          cd iosApp
+          mkdir -p build/ipa
+          APP_PATH=$(find build -name "*.app" | head -1)
+          if [ -n "$APP_PATH" ]; then
+            mkdir -p Payload
+            cp -r "$APP_PATH" Payload/
+            zip -r build/ipa/NequiVen-unsigned.ipa Payload
+            rm -rf Payload
+            echo "✅ IPA creado: build/ipa/NequiVen-unsigned.ipa"
+          fi
             
     artifacts:
-      - build/ios/ipa/*.ipa
-      - iosApp/build/ios/ipa/*.ipa
+      - iosApp/build/ipa/*.ipa
+      - iosApp/build/**/*.app
       
     publishing:
       email:
