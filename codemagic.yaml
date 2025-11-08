@@ -26,7 +26,29 @@ workflows:
         script: |
           echo "📦 Instalando CocoaPods..."
           cd iosApp
-          pod install
+          
+          # Verificar que Podfile existe
+          if [ ! -f "Podfile" ]; then
+            echo "❌ ERROR: Podfile no encontrado"
+            exit 1
+          fi
+          
+          # Instalar CocoaPods
+          echo "Ejecutando pod install..."
+          pod install --verbose || {
+            echo "⚠️ pod install falló, intentando con pod update..."
+            pod update --verbose
+          }
+          
+          # Verificar que el workspace se creó
+          if [ ! -d "iosApp.xcworkspace" ]; then
+            echo "❌ ERROR: iosApp.xcworkspace no fue creado"
+            echo "Listando contenido del directorio:"
+            ls -la
+            exit 1
+          fi
+          
+          echo "✅ CocoaPods instalado correctamente"
           cd ..
           
       - name: Compilar IPA sin firma
