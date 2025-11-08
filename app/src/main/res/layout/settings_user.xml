@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/nequi_purple">
+
+    <!-- Header morado -->
+    <FrameLayout
+        android:id="@+id/header"
+        android:layout_width="0dp"
+        android:layout_height="120dp"
+        android:background="@color/nequi_purple"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Ajustes de usuario"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:fontFamily="@font/manrope_bold"/>
+
+        <ImageView
+            android:id="@+id/btnBack"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_gravity="start|top"
+            android:layout_margin="12dp"
+            android:src="@android:drawable/ic_menu_revert"
+            android:tint="@android:color/white"
+            android:contentDescription="Atrás"
+            android:background="?selectableItemBackgroundBorderless"/>
+    </FrameLayout>
+
+    <!-- Contenedor -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardContainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="-30dp"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="6dp"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/labelName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ingresa el nombre de la víctima"
+                android:textColor="#ff200020"
+                android:textSize="14sp"
+                android:fontFamily="@font/manrope_medium"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <EditText
+                android:id="@+id/etName"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:background="@drawable/bg_edit_text_semitransparent"
+                android:hint="Escribe el nombre de la víctima"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:fontFamily="@font/manrope_regular"
+                android:textColor="#ff200020"
+                android:textColorHint="#80200020"
+                app:layout_constraintTop_toBottomOf="@id/labelName"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintWidth_percent="1"/>
+
+            <TextView
+                android:id="@+id/labelPhone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:text="Número de celular"
+                android:textColor="#ff200020"
+                android:textSize="14sp"
+                android:fontFamily="@font/manrope_medium"
+                app:layout_constraintTop_toBottomOf="@id/etName"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <EditText
+                android:id="@+id/etPhone"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:background="@drawable/bg_edit_text_semitransparent"
+                android:hint="Ej. 3001234567"
+                android:inputType="phone"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:fontFamily="@font/manrope_regular"
+                android:textColor="#ff200020"
+                android:textColorHint="#80200020"
+                app:layout_constraintTop_toBottomOf="@id/labelPhone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintWidth_percent="1"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSaveSettings"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginTop="18dp"
+                android:text="Guardar"
+                android:textAllCaps="false"
+                android:textSize="16sp"
+                android:fontFamily="@font/manrope_medium"
+                app:backgroundTint="@color/nequi_purple"
+                app:cornerRadius="12dp"
+                app:layout_constraintTop_toBottomOf="@id/etPhone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCancelSettings"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginTop="10dp"
+                android:text="Cancelar"
+                android:textAllCaps="false"
+                android:textSize="16sp"
+                android:fontFamily="@font/manrope_medium"
+                app:backgroundTint="@color/nequi_purple"
+                app:cornerRadius="12dp"
+                app:layout_constraintTop_toBottomOf="@id/btnSaveSettings"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

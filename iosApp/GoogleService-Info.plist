@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- IMPORTANTE: Este es un archivo PLACEHOLDER -->
+	<!-- Debes reemplazarlo con tu archivo real GoogleService-Info.plist de Firebase -->
+	<!-- Descárgalo desde: https://console.firebase.google.com -->
+	
+	<key>CLIENT_ID</key>
+	<string>TU_CLIENT_ID_AQUI</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>TU_REVERSED_CLIENT_ID_AQUI</string>
+	<key>API_KEY</key>
+	<string>TU_API_KEY_AQUI</string>
+	<key>GCM_SENDER_ID</key>
+	<string>TU_GCM_SENDER_ID_AQUI</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>ui.os.nequiven</string>
+	<key>PROJECT_ID</key>
+	<string>TU_PROJECT_ID_AQUI</string>
+	<key>STORAGE_BUCKET</key>
+	<string>TU_STORAGE_BUCKET_AQUI</string>
+	<key>IS_ADS_ENABLED</key>
+	<false/>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<true/>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true/>
+	<key>IS_GCM_ENABLED</key>
+	<true/>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true/>
+	<key>GOOGLE_APP_ID</key>
+	<string>TU_GOOGLE_APP_ID_AQUI</string>
+</dict>
+</plist>

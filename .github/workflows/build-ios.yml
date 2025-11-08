@@ -1,0 +1,96 @@
+name: Build iOS IPA
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:  # Permite ejecutar manualmente
+
+jobs:
+  build-ios:
+    name: Compilar IPA para iPhone
+    runs-on: macos-latest  # GitHub proporciona Mac GRATIS
+    
+    steps:
+    - name: 📥 Checkout código
+      uses: actions/checkout@v3
+      
+    - name: ☕ Configurar JDK 17
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+        
+    - name: 🔧 Configurar Gradle
+      uses: gradle/gradle-build-action@v2
+      
+    - name: 📦 Compilar módulo compartido KMM
+      run: |
+        echo "🔨 Generando framework para iOS..."
+        chmod +x gradlew
+        ./gradlew :shared:podPublishXCFramework --no-daemon
+        
+    - name: 🍎 Instalar CocoaPods
+      run: |
+        cd iosApp
+        pod install
+        
+    - name: 📱 Crear proyecto Xcode
+      run: |
+        cd iosApp
+        
+        # Crear proyecto Xcode si no existe
+        if [ ! -f "iosApp.xcodeproj/project.pbxproj" ]; then
+          echo "Creando proyecto Xcode..."
+          mkdir -p iosApp.xcodeproj
+        fi
+        
+    - name: 🔨 Compilar app iOS
+      run: |
+        cd iosApp
+        
+        # Compilar para simulador (no requiere firma)
+        xcodebuild \
+          -workspace iosApp.xcworkspace \
+          -scheme iosApp \
+          -configuration Release \
+          -sdk iphonesimulator \
+          -destination 'platform=iOS Simulator,name=iPhone 14' \
+          -derivedDataPath build \
+          CODE_SIGNING_ALLOWED=NO \
+          CODE_SIGNING_REQUIRED=NO \
+          clean build
+          
+    - name: 📦 Crear archivo IPA (sin firma)
+      run: |
+        cd iosApp
+        mkdir -p build/ipa
+        
+        # Crear estructura de IPA
+        APP_PATH=$(find build -name "*.app" | head -1)
+        if [ -n "$APP_PATH" ]; then
+          mkdir -p Payload
+          cp -r "$APP_PATH" Payload/
+          zip -r build/ipa/NequiVen-unsigned.ipa Payload
+          rm -rf Payload
+          echo "✅ IPA creado: build/ipa/NequiVen-unsigned.ipa"
+        fi
+        
+    - name: 🚀 Subir IPA como artefacto
+      uses: actions/upload-artifact@v3
+      with:
+        name: NequiVen-iOS
+        path: iosApp/build/ipa/*.ipa
+        retention-days: 30
+        
+    - name: 📊 Resumen
+      run: |
+        echo "✅ Compilación iOS completada"
+        echo "📱 Descarga el IPA desde la pestaña Actions > Artifacts"
+        echo "⚠️  IPA sin firma - Solo para pruebas en simulador"
+        echo ""
+        echo "Para firmar e instalar en iPhone real:"
+        echo "1. Descarga el IPA"
+        echo "2. Usa Xcode o herramientas de firma"
+        echo "3. O sube a TestFlight/App Store"

@@ -1,0 +1,61 @@
+workflows:
+  ios-release:
+    name: iOS Release Build - Nequi Ven
+    max_build_duration: 120
+    instance_type: mac_mini_m1
+    
+    environment:
+      ios_signing:
+        distribution_type: ad_hoc  # Para distribución directa (puedes cambiarlo a app_store)
+        bundle_identifier: ui.os.nequiven
+      
+      vars:
+        XCODE_WORKSPACE: "iosApp/iosApp.xcworkspace"
+        XCODE_SCHEME: "iosApp"
+        
+      xcode: 15.0
+      cocoapods: default
+      java: 17
+      
+    scripts:
+      - name: Generar framework KMM compartido
+        script: |
+          echo "🔨 Compilando módulo shared (Kotlin Multiplatform)..."
+          ./gradlew :shared:podPublishXCFramework
+          
+      - name: Instalar dependencias iOS
+        script: |
+          echo "📦 Instalando CocoaPods..."
+          cd iosApp
+          pod install
+          cd ..
+          
+      - name: Configurar firma de código
+        script: |
+          echo "🔐 Configurando certificados..."
+          keychain initialize
+          
+      - name: Compilar IPA
+        script: |
+          echo "🚀 Compilando app iOS..."
+          xcode-project build-ipa \
+            --workspace "$XCODE_WORKSPACE" \
+            --scheme "$XCODE_SCHEME" \
+            --config Release
+            
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - iosApp/build/ios/ipa/*.ipa
+      
+    publishing:
+      email:
+        recipients:
+          - tu-email@gmail.com
+        notify:
+          success: true
+          failure: true
+      # Descomentar para subir a App Store Connect
+      # app_store_connect:
+      #   api_key: $APP_STORE_CONNECT_KEY_IDENTIFIER
+      #   key_id: $APP_STORE_CONNECT_KEY_ID
+      #   issuer_id: $APP_STORE_CONNECT_ISSUER_ID

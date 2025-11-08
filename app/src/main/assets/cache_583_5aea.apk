@@ -1,0 +1,128 @@
+# Generador QR - Para pagos con QR y llave personalizada
+import os
+import sys
+from PIL import Image, ImageDraw, ImageFont
+
+
+def generate_qr_voucher(assets_path, para, llave, banco_destino, cuanto, desde):
+    """Generar comprobante de pago QR"""
+    print(f"[QR] === INICIO GENERACIÓN QR ===")
+    print(f"[QR] Assets: {assets_path}")
+    print(f"[QR] Para: {para}")
+    print(f"[QR] Llave: {llave}")
+    print(f"[QR] Banco: {banco_destino}")
+    print(f"[QR] Cuanto: {cuanto}")
+    print(f"[QR] Desde: {desde}")
+    
+    # Añadir assets al path
+    if assets_path not in sys.path:
+        sys.path.insert(0, assets_path)
+        print(f"[QR] Path agregado: {assets_path}")
+    
+    # Limpiar imports previos
+    for mod in ['config_nequi', 'utils_nequi']:
+        if mod in sys.modules:
+            del sys.modules[mod]
+            print(f"[QR] Módulo limpiado: {mod}")
+    
+    # Importar
+    import config_nequi
+    import utils_nequi
+    print(f"[QR] Módulos importados OK")
+    
+    cfg = config_nequi.COMPROBANTE_QR_CONFIG
+    
+    # Abrir plantilla en MODO ULTRA CALIDAD
+    template_path = os.path.join(assets_path, cfg['template'])
+    print(f"[QR] Buscando plantilla: {template_path}")
+    print(f"[QR] ¿Existe plantilla? {os.path.exists(template_path)}")
+    
+    # Abrir JPG con máxima calidad
+    img = Image.open(template_path)
+    
+    # Convertir a RGB
+    if img.mode != 'RGB':
+        img = img.convert('RGB')
+    
+    # Escalar 2x con LANCZOS
+    original_size = img.size
+    img = img.resize(
+        (original_size[0] * 2, original_size[1] * 2), 
+        Image.Resampling.LANCZOS
+    )
+    
+    # Aplicar SHARPEN
+    from PIL import ImageFilter, ImageEnhance
+    img = img.filter(ImageFilter.SHARPEN)
+    
+    # Aumentar contraste
+    enhancer = ImageEnhance.Contrast(img)
+    img = enhancer.enhance(1.05)
+    
+    draw = ImageDraw.Draw(img)
+    print(f"[QR] ✅ Plantilla ULTRA 4K: {img.size[0]}x{img.size[1]} (2x + sharpened)")
+    
+    # Preparar datos ESPECÍFICOS PARA QR
+    data = [
+        ("para", str(para)),
+        ("llave", str(llave)),
+        ("banco_destino", str(banco_destino)),
+        ("fecha", utils_nequi.get_date()),
+        ("cuanto", utils_nequi.format_currency(cuanto)),
+        ("referencia", utils_nequi.get_reference()),
+        ("desde", utils_nequi.format_phone(desde)),
+        ("disponible", "Disponible")
+    ]
+    
+    # Cargar fuente
+    font_path = os.path.join(assets_path, cfg['font'])
+    print(f"[QR] Buscando fuente: {font_path}")
+    print(f"[QR] ¿Existe fuente? {os.path.exists(font_path)}")
+    
+    # Tamaño 2x para la fuente
+    font_size_scaled = cfg['font_size'] * 2
+    font = ImageFont.truetype(font_path, font_size_scaled)
+    print(f"[QR] ✅ Fuente: {cfg['font_size']}px (escalada a {font_size_scaled}px)")
+    
+    # Dibujar textos con coordenadas escaladas 2x
+    print(f"[QR] === DIBUJANDO TEXTOS ===")
+    for field, text in data:
+        if field in cfg['fields']:
+            orig_pos = cfg['fields'][field]
+            pos = (orig_pos[0] * 2, orig_pos[1] * 2)
+            draw.text(pos, text, font=font, fill=cfg['color'])
+            print(f"[QR] ✓ {field}: '{text}' en coordenadas originales {orig_pos}")
+        else:
+            print(f"[QR] ✗ CAMPO NO ENCONTRADO: {field}")
+    
+    # Guardar PNG ULTRA CALIDAD
+    output_path = os.path.join(assets_path, cfg['output'])
+    img.save(
+        output_path, 
+        'PNG',
+        optimize=False,
+        compress_level=0,
+        icc_profile=None,
+        dpi=(600, 600)
+    )
+    
+    file_size = os.path.getsize(output_path) if os.path.exists(output_path) else 0
+    print(f"[QR] === FIN GENERACIÓN ULTRA 4K ===")
+    print(f"[QR] ✅ Guardado: {output_path}")
+    print(f"[QR] ✅ Tamaño: {file_size} bytes")
+    print(f"[QR] ✅ Resolución: {img.size[0]}x{img.size[1]} @ 600 DPI")
+    
+    return output_path
+
+
+def generate_from_assets(assets_path, para, llave, banco_destino, cuanto, desde, config_name=None):
+    """Wrapper para VoucherQrActivity"""
+    print(f"[QR] generate_from_assets llamado con:")
+    print(f"  - assets_path: {assets_path}")
+    print(f"  - para: {para}")
+    print(f"  - llave: {llave}")
+    print(f"  - banco_destino: {banco_destino}")
+    print(f"  - cuanto: {cuanto}")
+    print(f"  - desde: {desde}")
+    print(f"  - config_name: {config_name}")
+    return generate_qr_voucher(assets_path, para, llave, banco_destino, cuanto, desde)

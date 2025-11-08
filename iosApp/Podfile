@@ -1,0 +1,34 @@
+# Plataforma mínima iOS 14.0 (compatible con la mayoría de dispositivos)
+platform :ios, '14.0'
+
+# Usar frameworks dinámicos (requerido para Kotlin Multiplatform)
+use_frameworks!
+
+target 'iosApp' do
+  # Firebase (versiones compatibles con iOS 14+)
+  pod 'Firebase/Auth', '~> 10.20.0'
+  pod 'Firebase/Firestore', '~> 10.20.0'
+  pod 'Firebase/Storage', '~> 10.20.0'
+  pod 'Firebase/Analytics', '~> 10.20.0'
+  pod 'Firebase/Crashlytics', '~> 10.20.0'
+  pod 'Firebase/Messaging', '~> 10.20.0'
+  
+  # Framework compartido KMM (se genera desde el módulo shared)
+  # Este pod se configura automáticamente si usas CocoaPods en shared/build.gradle.kts
+  pod 'shared', :path => '../shared'
+end
+
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      # Configuración para Swift 5
+      config.build_settings['SWIFT_VERSION'] = '5.0'
+      
+      # Soporte para arquitecturas ARM64
+      config.build_settings['ONLY_ACTIVE_ARCH'] = 'YES'
+      
+      # Optimizaciones
+      config.build_settings['ENABLE_BITCODE'] = 'NO'
+    end
+  end
+end
