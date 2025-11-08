@@ -38,16 +38,8 @@ kotlin {
             isStatic = true
         }
         
-        // Dependencias CocoaPods (Firebase para iOS)
-        pod("FirebaseAuth") {
-            version = "10.20.0"
-        }
-        pod("FirebaseFirestore") {
-            version = "10.20.0"
-        }
-        pod("FirebaseStorage") {
-            version = "10.20.0"
-        }
+        // Firebase se configura directamente en iOS, no desde shared
+        // Esto evita conflictos de versiones y simplifica la compilación
     }
     
     sourceSets {

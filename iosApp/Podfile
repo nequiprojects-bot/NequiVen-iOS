@@ -5,17 +5,16 @@ platform :ios, '14.0'
 use_frameworks!
 
 target 'iosApp' do
-  # Firebase (versiones compatibles con iOS 14+)
-  pod 'Firebase/Auth', '~> 10.20.0'
-  pod 'Firebase/Firestore', '~> 10.20.0'
-  pod 'Firebase/Storage', '~> 10.20.0'
-  pod 'Firebase/Analytics', '~> 10.20.0'
-  pod 'Firebase/Crashlytics', '~> 10.20.0'
-  pod 'Firebase/Messaging', '~> 10.20.0'
-  
   # Framework compartido KMM (se genera desde el módulo shared)
-  # Este pod se configura automáticamente si usas CocoaPods en shared/build.gradle.kts
   pod 'shared', :path => '../shared'
+  
+  # Firebase (opcional - descomentar cuando necesites Firebase en iOS)
+  # pod 'Firebase/Auth', '~> 10.20.0'
+  # pod 'Firebase/Firestore', '~> 10.20.0'
+  # pod 'Firebase/Storage', '~> 10.20.0'
+  # pod 'Firebase/Analytics', '~> 10.20.0'
+  # pod 'Firebase/Crashlytics', '~> 10.20.0'
+  # pod 'Firebase/Messaging', '~> 10.20.0'
 end
 
 post_install do |installer|
